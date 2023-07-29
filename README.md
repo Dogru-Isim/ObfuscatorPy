@@ -14,7 +14,7 @@
 
 - `--app:` Final application type (gui, console, dll etc.)
 
-
+### Example commands:
 
 `./ObfuscatorPy.py -sc messagebox.bin -ol "rot13,base64,rot13" -o /home/user/output.exe`
 
