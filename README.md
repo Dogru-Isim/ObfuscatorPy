@@ -2,7 +2,7 @@
 
 ### Parameters:
 
-- `--target-application-path:` Change the target app to inject into it's memory
+- `--target-application-path:` Change the target app that you'll inject into it's memory
 
 - `--obfuscator-list:` Choose obfuscation list
 
