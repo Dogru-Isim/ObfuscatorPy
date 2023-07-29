@@ -1,3 +1,5 @@
+# ObfuscatorPy
+
 ### Parameters:
 
 - `--target-application-path:` Change the target app to inject into it's memory
