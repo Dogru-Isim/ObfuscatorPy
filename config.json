@@ -1,0 +1,25 @@
+{
+    "tool_name": "ObfuscatorPy",
+
+    "available_obfuscation_methods": "base64,rot13",
+    "available_injection_methods": "Early-Bird_APC_Injection",
+    "application_configs": {
+        "available_app_types": "console,gui,lib",
+        "default_app_type": "console",
+        "default_cpu_type": "amd64",
+        "default_output_path": "output/output.exe"
+    },
+
+    "DLL_placeholder": "# DLL_CODE",
+    "shellcode_placeholder": "SHELLCODE_INJECTED_HERE",
+    "shellcode_size_placeholder": "SIZE_INJECTED_HERE",
+    "target_application_path_placeholder": "APPLICATION_PATH_INJECTED_HERE",
+    "regular_binary_code_placeholder": "# REGULAR_BINARY_CODE",
+    "deobfuscation_code_placeholder": "# DEOBFUSCATION_CODE_INJECTED_HERE",
+
+    "nim_ebapc_skel_filename": "programming_languages/nim/ebapc_skel.nim",
+    "nim_ebapc_filename": "ebapc.nim",
+    "temporary_shellcode_filename": "shellcode.txt",
+    
+    "default_target_app": "C:\\Windows\\notepad.exe"
+}
