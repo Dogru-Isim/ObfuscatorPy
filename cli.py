@@ -10,7 +10,7 @@ AVAILABLE_APP_TYPES = config["application_configs"]["available_app_types"].split
 DEFAULT_APP_TYPE = config["application_configs"]["default_app_type"]
 DEFAULT_OUTPUT_PATH = config["application_configs"]["default_output_path"]
 DEFAULT_CPU_TYPE = config["application_configs"]["default_cpu_type"]
-DEFAULT_TARGET_APP = r"C:\Windows\notepad.exe" # config["default_target_app"]
+DEFAULT_TARGET_APP = config["default_target_app"]  # r"C:\Windows\notepad.exe" 
 
 TOOL_NAME = config["tool_name"]
 
