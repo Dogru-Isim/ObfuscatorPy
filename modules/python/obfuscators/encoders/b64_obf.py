@@ -8,7 +8,8 @@ base64_decoding_code = F"""
 for i in 0..<{{}}:
     sc = sc.decode()
 
-# Adding this so other encoders can inject their codes too
+# Adding this so other obfuscators
+#  can inject their codes too
 {DEOBFUSCATION_CODE_PLACEHOLDER}
 """
 

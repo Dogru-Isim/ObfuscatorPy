@@ -32,7 +32,7 @@ def generate_cli_args():
     parser.add_argument("-o", "--output", default=DEFAULT_OUTPUT_PATH, help="path for the final binary")
 
     args = parser.parse_args()
-    if not args.msfvenom_command:
+    if not args.msfvenom_command:   # Require shellcode file if msfvenom_command is not supplied
         parser.add_argument("-sc", "--shellcode", required=True, help="path to shellcode (raw or python formatted 0x41,0x42...) necessary if --msfvenom-command is not specified")
     
     # Change default name from .exe to .dll if the user wants a dll

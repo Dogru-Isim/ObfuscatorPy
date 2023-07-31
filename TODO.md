@@ -6,8 +6,16 @@
 
 ### Features:
 
-- Implement other kinds of injection methods (I want this new MAC address formatted injection)
+- Implement other kinds of injection methods
+  
+  - The new MAC address formatted injection
 
-- Implement injection methods with different programming languages (Rust seems cool)
+- Implement injection methods with different programming languages
+  
+  - Rust
 
 - Implement built-in icon changer (no icon is pretty sus don't you think?)
+
+- Implement more encryption-decoding methods
+  
+  - AES-CBC   **DONE**

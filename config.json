@@ -1,7 +1,7 @@
 {
     "tool_name": "ObfuscatorPy",
 
-    "available_obfuscation_methods": "base64,rot13",
+    "available_obfuscation_methods": "base64,rot13,aes-cbc",
     "available_injection_methods": "Early-Bird_APC_Injection",
     "application_configs": {
         "available_app_types": "console,gui,lib",
@@ -16,6 +16,7 @@
     "target_application_path_placeholder": "APPLICATION_PATH_INJECTED_HERE",
     "regular_binary_code_placeholder": "# REGULAR_BINARY_CODE",
     "deobfuscation_code_placeholder": "# DEOBFUSCATION_CODE_INJECTED_HERE",
+    "deobfuscation_function_placeholder": "# DEOBFUSCATION_FUNCTION_INJECTED_HERE",
 
     "nim_ebapc_skel_filename": "programming_languages/nim/ebapc_skel.nim",
     "nim_ebapc_filename": "ebapc.nim",

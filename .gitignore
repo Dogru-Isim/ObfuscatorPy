@@ -1,1 +1,3 @@
 messagebox.bin
+modules/python/obfuscators/encryptors/aesDecrypt
+modules/python/obfuscators/encryptors/aesDecrypt.nim

@@ -5,12 +5,27 @@ import json
 
 config = json.load(open(file='./config.json', encoding="utf-8"))    # Read json config file
 DEOBFUSCATION_CODE_PLACEHOLDER = config["deobfuscation_code_placeholder"]
+DEOBFUSCATION_FUNCTION_PLACEHOLDER = config["deobfuscation_function_placeholder"]
+
+rot13_decode = f"""
+proc rot13decode(stringToEncode: string): string =
+    for c in stringToEncode:
+        case toUpperAscii(c)
+            of 'N'..'Z':
+                result = result & chr(ord(c) - 13)
+            of 'A'..'M':
+                result = result & chr(ord(c) + 13)
+            else:
+                result = result & c
+
+{DEOBFUSCATION_FUNCTION_PLACEHOLDER}
+"""
 
 rot13_decoding_code = f"""
 for i in 0..<{{}}:            # Count added in add_rot13_decoding_code()
     sc = rot13decode(sc)
 
-# Adding this so other encoders can inject their codes too
+# Adding this so other obfuscators can inject their codes too
 {DEOBFUSCATION_CODE_PLACEHOLDER}
 """
 
