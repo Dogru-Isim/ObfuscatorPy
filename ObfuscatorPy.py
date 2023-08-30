@@ -89,21 +89,38 @@ def create_new_nim_file(new_nim_filename: str, nim_code: str):
     with open(new_nim_filename, 'w') as f:
         f.write(nim_code)
 
-def add_deobfuscation_functions(nim_code: str, function_names: tuple) -> str:
-    """
-    add_deobfuscation_function(nim_code, function_names)
-
-    Get nim_code, replace   DEOBFUSCATION_FUNCTION_PLACEHOLDER with the given deobfuscation function
-    Return:
-        nim_code with the added function (str)
-    """
+def add_function(nim_code: str, function_names: tuple, placeholder: str) -> str:
     for function_name in function_names:
-        nim_code = nim_code.replace(DEOBFUSCATION_FUNCTION_PLACEHOLDER, function_name)
+        nim_code = nim_code.replace(placeholder, function_name)
 
     return nim_code
 
-# Add obfuscation code
-def add_obfuscation(nim_code: str, sc: str, obfuscation_methods: str, available_obfuscation_methods: list) -> str:
+def add_deobfuscation_functions(nim_code: str, obfuscation_methods: list, placeholder: str) -> str:
+    """
+    add_deobfuscation_functions(nim_code, obfuscation_methods, placeholder)
+
+    Get nim_code, obfuscation_methods, placeholder replace placeholder with the functions of the given obfuscation method
+    Return:
+        nim_code with the added functions (str)
+    """
+
+    # Add deobfuscation functions to the nim code
+    for method in obfuscation_methods:
+        print("Adding deobfuscation functions for: ", method)
+        match method:
+            case 'base64':
+                pass    # Base64 decoding doesn't need an external function
+            case 'rot13':
+                nim_code = add_function(nim_code, (rot13_decode,), placeholder)
+            case 'aes-cbc':
+                nim_code = add_function(nim_code, (seperateStringInto2, byteSeqToString, strToByteSeq, decryptAES), placeholder)
+            case other:
+                print(f"Obfuscation method is not found, allowed obfuscation methods are: {AVAILABLE_OBFUSCATION_METHODS}")
+
+    return nim_code
+
+# Add obfuscation and deobfuscation functions/codes
+def add_obfuscation(nim_code: str, sc: str, obfuscation_methods: str, available_obfuscation_methods: list = AVAILABLE_OBFUSCATION_METHODS) -> str:
     obfuscation_methods = obfuscation_methods.split(',')  # Convert from string of format "base64,xor,..." to list
 
     # Obfuscate and add the shellcode into the nim code
@@ -127,19 +144,7 @@ def add_obfuscation(nim_code: str, sc: str, obfuscation_methods: str, available_
             case other:
                 print(f"Obfuscation method is not found, allowed obfuscation methods are: {available_obfuscation_methods}")
         
-    # Add necessary decoding/decryption functions to nim_code
-    # NOTE: Why not a function?
-    for method in set(obfuscation_methods):
-        print("Adding functions for: ", method)
-        match method:
-            case 'base64':
-                pass    # Base64 decoding doesn't need an external function
-            case 'rot13':
-                nim_code = add_deobfuscation_functions(nim_code, (rot13_decode,))
-            case 'aes-cbc':
-                nim_code = add_deobfuscation_functions(nim_code, (seperateStringInto2, byteSeqToString, strToByteSeq, decryptAES))
-            case other:
-                print(f"Decryption method not found, allowed decryption methods are: {available_obfuscation_methods}")
+    nim_code = add_deobfuscation_functions(nim_code, obfuscation_methods, DEOBFUSCATION_FUNCTION_PLACEHOLDER)
 
     # Add deobfuscation codes to the nim code
     obfuscation_methods.reverse()   # Reverse the obfuscation list

@@ -1,8 +1,4 @@
-### Problems:
-
-- `ObfuscatorPy.py`
-  
-  - Fix the weird `Entry-Point DLLRegisterServer was not found` error (DLL still runs with `regsvr32.exe`) (Is it on my end?)
+### Fix:
 
 ### Features:
 
@@ -16,6 +12,7 @@
 
 - Implement built-in icon changer (no icon is pretty sus don't you think?)
 
-- Implement more encryption-decoding methods
-  
-  - AES-CBC   **DONE**
+### Improve:
+
+- Implement `dynamic importing` (malware won't import libraries unless necessary)
+- Create symlinks in `install.sh` and take the `SOURCE_DIR` in the first run
