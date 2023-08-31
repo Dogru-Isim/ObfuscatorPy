@@ -1,11 +1,9 @@
 messagebox.bin
-
+test/
+__pycache__/
 modules/python/obfuscators/encryptors/aesDecrypt
 modules/python/obfuscators/encryptors/aesDecrypt.nim
 modules/python/converters/__pycache__/
 modules/python/obfuscators/encoders/__pycache__/
 modules/python/obfuscators/encoders/__pycache__/
 modules/python/obfuscators/encryptors/__pycache__/
-
-test/
-__pycache__/
