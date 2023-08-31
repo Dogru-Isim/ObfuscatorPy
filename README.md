@@ -10,7 +10,7 @@ bash ./install.sh
 
 This will install the required packages
 
-You can now look at the and [Parameters](#parameters) [Example Commands](#example-commands)
+You can now look at the [Parameters](#parameters) and [Example Commands](#example-commands)
 
 
 
