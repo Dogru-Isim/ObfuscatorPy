@@ -105,7 +105,7 @@ def add_deobfuscation_functions(nim_code: str, obfuscation_methods: list, placeh
     """
 
     # Add deobfuscation functions to the nim code
-    for method in obfuscation_methods:
+    for method in set(obfuscation_methods):
         print("Adding deobfuscation functions for: ", method)
         match method:
             case 'base64':
@@ -120,8 +120,12 @@ def add_deobfuscation_functions(nim_code: str, obfuscation_methods: list, placeh
     return nim_code
 
 # Add obfuscation and deobfuscation functions/codes
+# NOTE: Decoding functions and codes are not the same, adding functions adds necessary functions to deobfuscate while adding code does the actual deobfuscation
 def add_obfuscation(nim_code: str, sc: str, obfuscation_methods: str, available_obfuscation_methods: list = AVAILABLE_OBFUSCATION_METHODS) -> str:
     obfuscation_methods = obfuscation_methods.split(',')  # Convert from string of format "base64,xor,..." to list
+    aes_keys = []
+    aes_ivs = []
+    aes_padding_lengths = []
 
     # Obfuscate and add the shellcode into the nim code
     for method in obfuscation_methods:
@@ -133,6 +137,9 @@ def add_obfuscation(nim_code: str, sc: str, obfuscation_methods: str, available_
                 sc = rot13_obf(sc)
             case 'aes-cbc':
                 sc, key, iv, padding_length = aes_obf(sc)    # sc, key and iv are hex encoded
+                aes_keys.append(key)
+                aes_ivs.append(iv)
+                aes_padding_lengths.append(padding_length)
                 #print(      # DEBUG
                 #    f"""
                 #    sc: {sc}
@@ -156,7 +163,8 @@ def add_obfuscation(nim_code: str, sc: str, obfuscation_methods: str, available_
             case 'rot13':
                 nim_code = add_rot13_decoding_code(nim_code)
             case 'aes-cbc':
-                nim_code = add_aes_decryption_code(nim_code, key, iv, str(padding_length))
+                nim_code = add_aes_decryption_code(nim_code, aes_keys[-1], aes_ivs[-1], str(aes_padding_lengths[-1]))
+                aes_keys.pop(); aes_ivs.pop(); aes_padding_lengths.pop()
             case other:
                 print(f"Deobfuscation method is not found, allowed obfuscation methods are: {available_obfuscation_methods}")
     
