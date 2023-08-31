@@ -54,6 +54,6 @@ You can now look at the [Parameters](#parameters) and [Example Commands](#exampl
 
 2. Use aes-cbc to obfuscate the shellcode
 
-3. Output to `./output/output.txt` (default)
+3. Output to `./output/output.exe` (default)
 
 4. Note: rot13 won't change the shellcode as bytes but as a string (letter by letter)
