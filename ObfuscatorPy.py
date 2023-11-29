@@ -33,7 +33,7 @@ DLL_CODE = """
 
         return true
     """
-REGULAR_BINARY_CODE_PLACEHOLDER = config["regular_binary_code_placeholder"] # As apposed to DLL code
+REGULAR_BINARY_CODE_PLACEHOLDER = config["regular_binary_code_placeholder"] # As opposed to DLL code
 REGULAR_BINARY_CODE = "injectQueueUserAPC(shellcode)"
 
 
