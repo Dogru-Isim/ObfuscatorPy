@@ -1,2 +1,2 @@
 macaddress==2.0.2
-pycryptodome==3.18.0
+pycryptodome==3.19.1
